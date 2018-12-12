@@ -831,9 +831,9 @@
     to-fast-properties "^2.0.0"
 
 "@bloomstack/panda@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@bloomstack/panda/-/panda-1.0.0.tgz#ec36c608985be15894a23029300bf291becd9f51"
-  integrity sha512-IBhKq5+SSULEFgYiAp39E5SIET4l4BLWD5pAlg8utnwFHlsRsuHjhMlPDynWg3rlStOPhNmSD5NIs8RB6JCgEg==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@bloomstack/panda/-/panda-1.0.1.tgz#3cd668a92ed2b23238d2bc9682008d8489bd76a3"
+  integrity sha512-9/OE2YxMGBDR1Oyj/yw6eRuR5MGnfpyGQKAbeiKv7dE2xWAmeZRs6NgfzIvSkljPI+OyMeKQLY8EYAyhZvqakQ==
 
 "@webassemblyjs/ast@1.7.11":
   version "1.7.11"

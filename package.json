@@ -1,6 +1,6 @@
 {
   "name": "@bloomstack/stem",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "A js bloomstack app starter.",
   "main": "src/index.js",
   "bin": {
@@ -11,7 +11,7 @@
     "clean:demo": "stem clean ./demo/dist"
   },
   "dependencies": {
-    "@bloomstack/panda": "^1.0.0",
+    "@bloomstack/panda": "latest",
     "jquery": "^3.3.1"
   },
   "devDependencies": {
