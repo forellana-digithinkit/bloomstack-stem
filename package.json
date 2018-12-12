@@ -1,0 +1,57 @@
+{
+  "name": "@bloomstack/stem",
+  "version": "1.0.0-alpha.1",
+  "description": "A js bloomstack app starter.",
+  "main": "src/index.js",
+  "bin": {
+    "stem": "./cli/index.js"
+  },
+  "scripts": {
+    "build:demo": "stem build ./demo -o ./demo/dist",
+    "clean:demo": "stem clean ./demo/dist"
+  },
+  "dependencies": {
+    "@bloomstack/panda": "^1.0.0",
+    "jquery": "^3.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-proposal-class-properties": "^7.2.1",
+    "@babel/plugin-proposal-decorators": "^7.2.0",
+    "@babel/plugin-proposal-do-expressions": "^7.2.0",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/plugin-proposal-function-bind": "^7.2.0",
+    "@babel/plugin-proposal-function-sent": "^7.2.0",
+    "@babel/plugin-proposal-json-strings": "^7.2.0",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.2.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.2.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.2.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-syntax-import-meta": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime-corejs2": "^7.2.0",
+    "babel-loader": "^8.0.4",
+    "chalk": "^2.4.1",
+    "file-loader": "^2.0.0",
+    "fs-extra": "^7.0.1",
+    "handlebars-loader": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "terser-webpack-plugin": "^1.1.0",
+    "webpack": "^4.27.1",
+    "webpack-livereload-plugin": "^2.1.1",
+    "yargs": "^12.0.5"
+  },
+  "author": "",
+  "homepage": "",
+  "license": "MIT",
+  "repository": ""
+}
