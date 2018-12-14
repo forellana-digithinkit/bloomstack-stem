@@ -7,7 +7,8 @@
     "stem": "./cli/index.js"
   },
   "scripts": {
-    "build:demo": "stem build ./demo -o ./demo/dist",
+    "build:demo": "stem build ./demo -c ./stem.demo.config.js",
+    "dev:demo": "stem build ./demo -c ./stem.demo.config.js --watch --dev",
     "clean:demo": "stem clean ./demo/dist"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "@babel/runtime-corejs2": "^7.2.0",
     "babel-loader": "^8.0.4",
     "chalk": "^2.4.1",
+    "express": "^4.16.4",
     "file-loader": "^2.0.0",
     "fs-extra": "^7.0.1",
     "handlebars-loader": "^1.7.0",
@@ -47,6 +49,7 @@
     "sass-loader": "^7.1.0",
     "terser-webpack-plugin": "^1.1.0",
     "webpack": "^4.27.1",
+    "webpack-dev-middleware": "^3.4.0",
     "webpack-livereload-plugin": "^2.1.1",
     "yargs": "^12.0.5"
   },

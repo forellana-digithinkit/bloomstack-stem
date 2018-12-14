@@ -1,5 +1,5 @@
 import Component, { Container, safe } from '@bloomstack/panda';
-import $ from 'jquery';
+//import $ from 'jquery';
 
 /**
  * Base page class for bloomstack applications

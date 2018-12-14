@@ -1,5 +1,5 @@
 import Component from '@bloomstack/panda';
-import $ from 'jquery';
+//import $ from 'jquery';
 import HTML from './HTML';
 
 export default class HTMLRouter extends Component {

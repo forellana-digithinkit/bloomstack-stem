@@ -52,14 +52,21 @@ module.exports = {
                 })
                 .option('watch', {
                     alias: 'w',
+                    describe: "Will watch source files for changes and recompile on demand",
                     default: false
                 })
                 .option('dev', {
+                    describe: "Builds in development mode",
                     default: false
                 })
                 .option('output', {
                     alias: 'o',
+                    describe: "The output directory to build to",
                     default: path.join(cwd, '/dist')
+                })
+                .option('config', {
+                    alias: 'c',
+                    describe: "If provided you can override all builder options with your own module"
                 })
             })
     },
@@ -70,18 +77,34 @@ module.exports = {
         let cwd = process.cwd();
         let options = {};
         options.mode = argv.dev?'development':'production';
-        ['debug', 'watch', 'output', 'src'].forEach((key) => {
+        ['debug', 'watch', 'output', 'src', 'config', 'dev'].forEach((key) => {
             options[key] = argv[key];
-        })
+        });
 
-        let config = defaults(cwd, options);
+        let buildOptions = [];
 
-        config.state = {};
+        // pickup user config
+        if ( options.config ) {
+            let userOptions = require(path.resolve(path.join(cwd, options.config)));
+            if ( userOptions.constructor !== Array ) {
+                userOptions = [userOptions];
+            }
+            buildOptions = buildOptions.concat(userOptions);
+        } else {
+            // defaults to no user options 
+            buildOptions.push({});
+        }
 
-        build(config, options)
-            .catch(err => {
-                console.log(err.stack);
-                console.error(theme.error(err));
-            });
+        return Promise.all(buildOptions.map((userOptions) => {
+            userOptions = Object.assign({}, options, userOptions);
+            let config = defaults(cwd, userOptions);
+            config.state = {};
+
+            return build(config, userOptions)
+                .catch(err => {
+                    console.log(err.stack);
+                    console.error(theme.error(err));
+                });
+        }));
     }
 }

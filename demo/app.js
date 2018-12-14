@@ -1,11 +1,13 @@
 import WebApp from '../src/index';
 import { ChildToggle } from '@bloomstack/panda/es/utils';
-import $ from 'jquery';
+//import $ from 'jquery';
 
 import './style.scss';
 import appTpl from './templates/app.handlebars';
 
 import { Home, Page1, Page2 } from './pages';
+
+let $ = null;
 
 export default class DemoApp extends WebApp {
 
@@ -22,6 +24,12 @@ export default class DemoApp extends WebApp {
             enabled: false,
             selector: () => $(this.selector).find('.content:first')
         });
+    }
+
+    async onResourceLoaded(resource) {
+        if ( resource.name === 'jquery' ) {
+            $ = resource.$;
+        }
     }
 
     async onAppStart() {

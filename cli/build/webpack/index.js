@@ -2,6 +2,7 @@ const theme = require('../../theme');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
+const WebServer = require('./webServer');
 
 const modules = [
     require('./html'),
@@ -21,10 +22,6 @@ function defaults(cwd, options) {
         },
 
         mode: options.mode,
-
-        externals: {
-            jquery: 'jQuery'
-        },
 
         optimization: {
             minimizer: [
@@ -68,7 +65,25 @@ function defaults(cwd, options) {
 
     if ( options.output ) {
         config.output = Object.assign({}, config.output || {}, {
-            path: path.resolve(options.output)
+            path: path.resolve(options.output),
+        });
+    }
+
+    if ( options.filename ) {
+        config.output = Object.assign({}, config.output || {}, {
+            filename: options.filename,
+        });
+    }
+
+    if ( options.library ) {
+        config.output = Object.assign({}, config.output || {}, {
+            library: options.library
+        });
+    }
+
+    if ( options.libraryTarget ) {
+        config.output = Object.assign({}, config.output || {}, {
+            libraryTarget: options.type
         });
     }
 
@@ -90,6 +105,9 @@ function build(config, options) {
 
         if ( options.watch ) {
             let watchOptions = Object.assign({}, {
+                devServer: {
+                    contentBase: options.output,
+                },
                 aggregateTimeout: 300,
                 ignored: /node_modules/,
                 'info-verbosity': options.verbose?'verbose':'info'
@@ -98,7 +116,7 @@ function build(config, options) {
             if ( process.platform === 'win32' ) {
                 watchOptions.pool = true;
             }
-
+            
             compiler.watch(watchOptions, (err, stats) => {
                 console.log(theme.success("Building..."));
 
@@ -115,6 +133,11 @@ function build(config, options) {
                     console.warn(theme.warn(info.warnings));
                 }
             });
+
+            if ( options.dev ) {
+                WebServer(config, options, compiler);
+            }
+
         } else {
             compiler.run((err, stats) => {
                 if ( err ) {
