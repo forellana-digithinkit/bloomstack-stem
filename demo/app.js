@@ -1,18 +1,20 @@
 import WebApp from '../src/index';
+import Resources from '../src/resources';
 import { ChildToggle } from '@bloomstack/panda/es/utils';
-//import $ from 'jquery';
 
 import './style.scss';
 import appTpl from './templates/app.handlebars';
 
 import { Home, Page1, Page2 } from './pages';
+import FontAwesome from '../src/thirdparty/fontawesome';
 
 let $ = null;
 
 export default class DemoApp extends WebApp {
 
     requiredComponents = [
-        ChildToggle
+        ChildToggle,
+        FontAwesome
     ]
 
     template = appTpl
@@ -22,27 +24,21 @@ export default class DemoApp extends WebApp {
 
         this.addChild([Home, Page1, Page2], {
             enabled: false,
-            selector: () => $(this.selector).find('.content:first')
+            selector: () => this.$(this.selector).find('.content:first')
         });
     }
 
-    async onResourceLoaded(resource) {
-        if ( resource.name === 'jquery' ) {
-            $ = resource.$;
-        }
+    async onJqueryLoaded(jQuery) {
+        $ = jQuery;
     }
 
     async onAppStart() {
-        this.togglePage('home');
-    }
-
-    async togglePage(pageName) {
-        console.log(this._components);
         const toggler = ChildToggle.of(this);
-        if ( toggler ) {
-            console.log(toggler);
-            await toggler.toggle(pageName);
-        }
+        await toggler.toggle('home');
     }
 
+    async onRouteChange(router, route) {
+        const toggler = ChildToggle.of(this);
+        await toggler.toggle(route);
+    }
 }

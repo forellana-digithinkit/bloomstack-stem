@@ -17,30 +17,40 @@ export class ResourceRequestEvent extends Event {
     constructor(resources, resource) {
         super(true);
 
-        this.resources = resources;
+        allResources = resources;
         this.resource = resource;
         this.await = new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
         });
     }
+
+    get name() {
+        return this.resource.name;
+    }
+
+    get before() {
+        return this.resource.before;
+    }
+
+    get after() {
+        return this.resource.after;
+    }
 }
+
+let allResources = {};
+let loadQueue = [];
 
 export default class Resources extends Component {
 
-    resources = [];
-    loadQueue = [];
     started = true;
     resourcePromise = null;
 
     get(resourceName) {
-        let found = Reflect.get(this.resources, resourceName);
-        console.dir(this.resources);
-        console.log(resourceName, found);
-        return found;
+        return Reflect.get(allResources, resourceName);
     }
 
-    async require(request) {
+    require(request) {
         let requestList = [];
 
         if ( request.constructor === Array ) {
@@ -49,50 +59,56 @@ export default class Resources extends Component {
             requestList.push(request);
         }
 
-        this.loadQueue = this.loadQueue.concat(requestList);
-        if ( this.resourcePromise === null ) {
-            this.resourcePromise = Promise.resolve();
-        }
+        let requestEvents = requestList.reduce((cur, r) => {
+            if ( loadQueue.findIndex((q) => q.name === r.name) === -1 ) {
+                cur.push(new ResourceRequestEvent(this, r));
+            }
+            return cur;
+        }, []);
+        loadQueue = loadQueue.concat(requestEvents);
 
-        return this.resourcePromise.then(() => {
-            return new Promise((resolve, reject) => {
-                this.resolvePromise = resolve;
-                this.rejectPromise = reject;
-            })
-        });
     }
 
-    async onLateStart() {
-        this.loadQueue.sort((a, b) => {
-            if( b.name in asArray(a.before) ) {
+    async onStart() {
+        loadQueue.sort((a, b) => {
+            if( asArray(a.before).indexOf(b.name) > -1 ) {
                 return -1
             }
 
-            if ( b.name in asArray(a.after) ) {
+            if ( asArray(a.after).indexOf(b.name) > -1 ) {
                 return 1;
             }
-
+            
             return 0;
         });
 
-        Promise.all(this.loadQueue.map(async (resource) => {
-            console.log(resource);
-            let e = new ResourceRequestEvent(this, resource);
-            await this._onLoadResource(e);
-            return e.await;
-        }))
-        .then(() => this.resolvePromise())
-        .catch((err) => this.rejectPromise(err));
+        return this.resourceWait = Promise
+            .all(loadQueue.map(async (e) => {
+                let result = this._onLoadResource(e);
+                Reflect.set(allResources, e.name, e.resource);
+                return result;
+            }))
+            .then(() => {
+                return this.broadcast("onAllResourcesLoaded", this);
+            })
+            
+    }
 
+    async onLateStart() {
+        return this.resourceWait
+            .then(() => {
+                return this.broadcast("onAfterAllResourcesLoaded", this);
+            });
     }
 
     async _onLoadResource(e) {
-        console.log(e);
         if ( e.resource.type === 'stylesheet' ) {
-            e.await.then((e) => this._loadCSS(e));
+            return this._loadCSS(e);
         } else if ( e.resource.type === 'javascript' ) {
-            e.await.then((e) => this._loadJS(e));
+            return this._loadJS(e);
         }
+
+        return Promise.reject();
     }
 
     _resourceDomCommon(el, resource, event) {
@@ -106,14 +122,17 @@ export default class Resources extends Component {
 
         let base = this;
         el.onload = function() {
-            base.resources[resource.name] = resource;
+            allResources[resource.name] = resource;
+            if ( resource.type === 'stylesheet' && 'async' in resource && resource.async ) {
+                el.setAttribute('media', 'screen');
+            }
 
-            if ( 'onload' in resource ) {
-                resource.onload.bind(resource)();
+            if ( 'onLoad' in resource ) {
+                resource.onLoad.bind(resource)(el);
             }
 
             event.resolve();
-            base.send('onResourceLoaded', resource);
+            base.send('onResourceLoaded', resource, el);
         }
 
         document.getElementsByTagName('head')[0].appendChild(el);
@@ -124,17 +143,21 @@ export default class Resources extends Component {
         el.setAttribute('rel', 'stylesheet');
         el.setAttribute('type', 'text/css');
         el.setAttribute('href', e.resource.url);
-        this._resourceDomCommon(el, e.resource);
+        if ( 'async' in e.resource && e.resource.async ) {
+            el.setAttribute('media', 'async-media');
+        }
 
-        return e;
+        this._resourceDomCommon(el, e.resource, e);
+
+        return e.await;
     }
 
     async _loadJS(e) {
         let el = document.createElement('script');
         el.setAttribute('type', 'text/javascript');
         el.setAttribute('src', e.resource.url);
-        this._resourceDomCommon(el, e.resource);
+        this._resourceDomCommon(el, e.resource, e);
 
-        return e;
+        return e.await;
     }
 }

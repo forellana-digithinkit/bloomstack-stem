@@ -12,6 +12,10 @@ export default class HTMLRouter extends Component {
         this.send("onRouteChange", this, route);
     }
 
+    async onJqueryLoaded(jQuery) {
+        $ = jQuery;
+    }
+
     async onBeforeRender(web) {
         web.$el
             .find('[route]')

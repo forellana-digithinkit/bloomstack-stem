@@ -1,5 +1,8 @@
 import Component, { Container, safe } from '@bloomstack/panda';
-//import $ from 'jquery';
+import Resources from './resources';
+import JQuery from './thirdparty/jquery';
+
+let $ = null;
 
 /**
  * Base page class for bloomstack applications
@@ -15,13 +18,22 @@ export default class HTML extends Component {
         this.template = (this.baseComponent || this).template;
     }
 
+    async onJqueryLoaded(jQuery) {
+        $ = jQuery;
+    }
+
     async onUpdate() {
+        await this.broadcast('onPrepareRender', this, (this.baseComponent || this).props);
         if ( this.template ) {
             this.html = this.template((this.baseComponent || this).props);
         }
     }
 
     async onAfterUpdate() {
+        if ( !$ ) {
+            return;
+        }
+
         let selector = safe(this.selector);
         
         if ( selector ) {

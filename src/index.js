@@ -3,6 +3,9 @@ import { Event } from '@bloomstack/panda/es/utils';
 import Resources from './resources';
 import HTML from './HTML';
 import HTMLRouter from './HTMLRouter';
+
+import JQuery from './thirdparty/jquery';
+import Bootstrap from './thirdparty/bootstrap';
 //import $ from 'jquery';
 
 let $;
@@ -25,48 +28,40 @@ export default class WebApp extends Component {
     static requiredComponents = [
         HTML,
         HTMLRouter,
-        Resources
+        Resources,
+        JQuery,
+        Bootstrap
     ]
 
     constructor(selector) {
         super();
         this.selector = selector;
+        this.name = 'WebApp';
+    }
+
+    get $() {
+        return JQuery.of(this).$;
     }
 
     async onInit() {
         this.resources = Resources.of(this);
-        this.resourceInitWait = this.resources.require([
-            {
-                name: 'fontawesome',
-                type: 'stylesheet',
-                url: 'https://use.fontawesome.com/releases/v5.6.1/css/all.css',
-                integrity: 'sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP',
-                crossorigin: 'anonymous',
-                after: 'jquery'
-            }
-        ]);
+        this.canUpdate = false;
 
         return null;
     }
 
     async onStart() {
         let e = new WebAppInitEvent(this, this.resources);
-        this.broadcast('onAppInit', e);
+        return await this.broadcast('onAppInit', e);
     }
 
-    async onLateStart() {
-
-        this.resourceInitWait
-            .then(() => {
-                $ = this.resources.get('jquery').$;
-                $(this.selector).addClass("bloomstack-app");
-                this.send("onAppStart", $);
-            });
-        
+    async onJqueryLoaded(jQuery) {
+        $ = jQuery;
     }
 
-    async onRouteChange(router, route) {
-        this.togglePage(route);
+    async onAfterAllResourcesLoaded(resources) {
+        this.canUpdate = true;
+        return await this.update().then(() => this.broadcast('onAppStart'));
     }
 }
 
