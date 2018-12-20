@@ -1,6 +1,6 @@
 {
   "name": "@bloomstack/stem",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "description": "A js bloomstack app starter.",
   "main": "src/index.js",
   "bin": {
