@@ -1,7 +1,6 @@
 const theme = require('../theme');
 const path = require('path');
 const fs = require('fs');
-const babelModule = require('./babel');
 const webpackModule = require('./webpack');
 
 const defaults = (cwd, options) => {
@@ -12,7 +11,6 @@ const defaults = (cwd, options) => {
 };
 
 const buildPipeline = [
-    babelModule,
     webpackModule
 ];
 
