@@ -1,21 +1,12 @@
 {
   "name": "@bloomstack/stem",
-  "version": "1.0.0-alpha.6",
-  "description": "A js bloomstack app starter.",
+  "version": "1.0.0-alpha.7",
+  "description": "A js bloomstack app build tool.",
   "main": "src/index.js",
   "bin": {
-    "stem": "./cli/index.js"
-  },
-  "scripts": {
-    "build:demo": "stem build ./demo -c ./stem.demo.config.js",
-    "dev:demo": "stem build ./demo -c ./stem.demo.config.js --watch --dev",
-    "clean:demo": "stem clean ./demo/dist"
+    "stem": "./src/index.js"
   },
   "dependencies": {
-    "@bloomstack/panda": "latest",
-    "jquery": "^3.3.1"
-  },
-  "devDependencies": {
     "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.2.1",
     "@babel/plugin-proposal-decorators": "^7.2.0",

@@ -1,68 +1,34 @@
-import Component from '@bloomstack/panda';
-import { Event } from '@bloomstack/panda/es/utils';
-import Resources from './resources';
-import HTML from './HTML';
-import HTMLRouter from './HTMLRouter';
+#!/usr/bin/env node
 
-import JQuery from './thirdparty/jquery';
-import Bootstrap from './thirdparty/bootstrap';
-//import $ from 'jquery';
+const yargs = require('yargs');
+const theme = require('./theme');
 
-let $;
+const commands = {
+    build: require('./build'),
+    clean: require('./clean'),
+};
 
-export { HTML, HTMLRouter, WebApp };
+yargs
+    .usage(`Usage: stem <command> [options]`)
+    .help('h')
+    .alias('h', 'help')
+    .epilog('copyright 2018');
 
-export class WebAppInitEvent extends Event {
-    constructor(app, resources) {
-        super(false);
+// let commands setup their own options
+Object.keys(commands).forEach(key => {
+    commands[key].setup(yargs, theme);
+});
 
-        this.app = app;
-        this.resources = resources;
+let argv = yargs.argv;
+
+if ( argv._[0] in commands ) {
+    let cmd = commands[argv._[0]];
+    if ( 'cli' in cmd )  {
+        cmd.cli(argv);
+    } else {
+        cmd.subcommand(argv.subcommand, argv);
     }
+} else {
+    console.error(theme.error('Command not found'));
+    yargs.showHelp();
 }
-
-/**
- * Bloomstack apps base application class
- */
-export default class WebApp extends Component {
-    static requiredComponents = [
-        HTML,
-        HTMLRouter,
-        Resources,
-        JQuery,
-        Bootstrap
-    ]
-
-    constructor(selector) {
-        super();
-        this.selector = selector;
-        this.name = 'WebApp';
-    }
-
-    get $() {
-        return JQuery.of(this).$;
-    }
-
-    async onInit() {
-        this.resources = Resources.of(this);
-        this.canUpdate = false;
-
-        return null;
-    }
-
-    async onStart() {
-        let e = new WebAppInitEvent(this, this.resources);
-        return await this.broadcast('onAppInit', e);
-    }
-
-    async onJqueryLoaded(jQuery) {
-        $ = jQuery;
-    }
-
-    async onAfterAllResourcesLoaded(resources) {
-        this.canUpdate = true;
-        return await this.update().then(() => this.broadcast('onAppStart'));
-    }
-}
-
-
