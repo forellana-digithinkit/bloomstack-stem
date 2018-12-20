@@ -102,8 +102,10 @@ module.exports = {
 
             return build(config, userOptions)
                 .catch(err => {
-                    console.log(err.stack);
-                    console.error(theme.error(err));
+                    if ( err ) {
+                        console.log(err.stack);
+                        console.error(theme.error(err));
+                    }
                 });
         }));
     }
