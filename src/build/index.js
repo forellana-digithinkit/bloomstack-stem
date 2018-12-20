@@ -7,7 +7,6 @@ const webpackModule = require('./webpack');
 const defaults = (cwd, options) => {
     return {
         cwd,
-        babelrc: babelModule.defaults(cwd, options),
         webpack: webpackModule.defaults(cwd, options)
     };
 };
