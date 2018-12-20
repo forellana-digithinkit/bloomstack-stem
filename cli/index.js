@@ -32,5 +32,3 @@ if ( argv._[0] in commands ) {
     console.error(theme.error('Command not found'));
     yargs.showHelp();
 }
-
-
