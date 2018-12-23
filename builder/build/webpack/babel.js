@@ -2,13 +2,14 @@ module.exports = function(cwd, options) {
     return {
         rule: {
             test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
             use: {
                 loader: "babel-loader",
                 options: {
                     presets: [
                         ["@babel/env", { 
                             modules: false,
-                            targets: {
+                            targets: options.targets || {
                                 browsers: [
                                     ">0.25%",
                                     "not ie 11",

@@ -5,12 +5,13 @@ const path = require('path');
 const WebServer = require('./webServer');
 
 const modules = [
+    require('./cleanup'),
     require('./html'),
     require('./css'),
     require('./images'),
     require('./fonts'),
     require('./handlebars'),
-    require('./js'),
+    require('./babel'),
     require('./livereload'),
 ];
 
@@ -24,6 +25,9 @@ function defaults(cwd, options) {
         mode: options.mode,
 
         optimization: {
+            splitChunks: {
+                chunks: 'all'
+            },
             minimizer: [
                 new TerserPlugin({
                     parallel: true,
@@ -72,6 +76,12 @@ function defaults(cwd, options) {
     if ( options.filename ) {
         config.output = Object.assign({}, config.output || {}, {
             filename: options.filename,
+        });
+    }
+
+    if ( options.chunkFilename ) {
+        config.output = Object.assign({}, config.output || {}, {
+            chunkFilename: options.chunkFilename,
         });
     }
 

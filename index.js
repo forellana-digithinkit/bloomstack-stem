@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const yargs = require('yargs');
-const theme = require('./theme');
+const theme = require('./builder/theme');
 
 const commands = {
-    build: require('./build'),
-    clean: require('./clean'),
+    build: require('./cli/build'),
+    clean: require('./builder/clean'),
 };
 
 yargs

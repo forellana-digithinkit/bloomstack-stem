@@ -41,7 +41,7 @@ module.exports = {
             .command('build [src]', 'Builds the app and outputs to ./dist (default)', (yargs) => {
                 return yargs.positional('src', {
                     describe: 'The source entry point to compile.',
-                    default: path.join(cwd, 'src')
+                    optional: true
                 })
                 .option('debug', {
                     alias: 'd',
